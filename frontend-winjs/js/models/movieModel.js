@@ -1,5 +1,5 @@
 // frontend-winjs/js/models/movieModel.js
-// Modèle de données pour l'application de films avec syntaxe WinJS native
+// CORRECTION: Fix du bug options undefined
 
 (function () {
     "use strict";
@@ -66,8 +66,11 @@
             this._cache = new Map();
             this._cacheTimeout = 5 * 60 * 1000; // 5 minutes
         }, {
-            // Méthode utilitaire pour les requêtes HTTP
+            // CORRECTION: Méthode utilitaire pour les requêtes HTTP avec gestion options
             _makeRequest: function (url, options) {
+                // FIX: Assurer que options existe toujours
+                options = options || {};
+                
                 var that = this;
                 return new WinJS.Promise(function (complete, error) {
                     var xhr = new XMLHttpRequest();
@@ -123,7 +126,7 @@
                 });
             },
 
-            // Récupération des genres
+            // CORRECTION: Récupération des genres avec options par défaut
             getGenres: function () {
                 var that = this;
                 var cacheKey = this._getCacheKey('/genres');
@@ -133,14 +136,15 @@
                     return WinJS.Promise.wrap(cached);
                 }
 
-                return this._makeRequest(this._baseUrl + '/genres')
+                // FIX: Passer un objet options même vide
+                return this._makeRequest(this._baseUrl + '/genres', {})
                     .then(function (data) {
                         that._setCache(cacheKey, data);
                         return data;
                     });
             },
 
-            // Découverte de films avec filtres
+            // CORRECTION: Découverte de films avec options
             discoverMovies: function (filters) {
                 filters = filters || {};
                 var params = new URLSearchParams();
@@ -152,10 +156,10 @@
                 });
 
                 var url = this._baseUrl + '/discover?' + params.toString();
-                return this._makeRequest(url);
+                return this._makeRequest(url, { method: 'GET' }); // FIX: Ajouter options
             },
 
-            // Recherche de films
+            // CORRECTION: Recherche de films avec options
             searchMovies: function (query, page, filters) {
                 page = page || 1;
                 filters = filters || {};
@@ -175,10 +179,10 @@
                 });
 
                 var url = this._baseUrl + '/search?' + params.toString();
-                return this._makeRequest(url);
+                return this._makeRequest(url, { method: 'GET' }); // FIX: Ajouter options
             },
 
-            // Détails d'un film
+            // CORRECTION: Détails d'un film avec options
             getMovieDetails: function (id) {
                 if (!id) {
                     return WinJS.Promise.wrapError(new Error('ID du film requis'));
@@ -192,14 +196,14 @@
                 }
 
                 var that = this;
-                return this._makeRequest(this._baseUrl + '/movie/' + id)
+                return this._makeRequest(this._baseUrl + '/movie/' + id, { method: 'GET' }) // FIX
                     .then(function (data) {
                         that._setCache(cacheKey, data);
                         return data;
                     });
             },
 
-            // Films populaires
+            // CORRECTION: Toutes les autres méthodes avec options
             getPopularMovies: function (page, timeWindow) {
                 page = page || 1;
                 timeWindow = timeWindow || 'week';
@@ -209,40 +213,36 @@
                 params.append('time_window', timeWindow);
 
                 var url = this._baseUrl + '/popular?' + params.toString();
-                return this._makeRequest(url);
+                return this._makeRequest(url, { method: 'GET' });
             },
 
-            // Films les mieux notés
             getTopRatedMovies: function (page) {
                 page = page || 1;
                 var params = new URLSearchParams();
                 params.append('page', page);
 
                 var url = this._baseUrl + '/top-rated?' + params.toString();
-                return this._makeRequest(url);
+                return this._makeRequest(url, { method: 'GET' });
             },
 
-            // Films à venir
             getUpcomingMovies: function (page) {
                 page = page || 1;
                 var params = new URLSearchParams();
                 params.append('page', page);
 
                 var url = this._baseUrl + '/upcoming?' + params.toString();
-                return this._makeRequest(url);
+                return this._makeRequest(url, { method: 'GET' });
             },
 
-            // Films actuellement au cinéma
             getNowPlayingMovies: function (page) {
                 page = page || 1;
                 var params = new URLSearchParams();
                 params.append('page', page);
 
                 var url = this._baseUrl + '/now-playing?' + params.toString();
-                return this._makeRequest(url);
+                return this._makeRequest(url, { method: 'GET' });
             },
 
-            // Recommandations de films
             getMovieRecommendations: function (id, page) {
                 if (!id) {
                     return WinJS.Promise.wrapError(new Error('ID du film requis'));
@@ -253,10 +253,9 @@
                 params.append('page', page);
 
                 var url = this._baseUrl + '/movie/' + id + '/recommendations?' + params.toString();
-                return this._makeRequest(url);
+                return this._makeRequest(url, { method: 'GET' });
             },
 
-            // Films similaires
             getSimilarMovies: function (id, page) {
                 if (!id) {
                     return WinJS.Promise.wrapError(new Error('ID du film requis'));
@@ -267,10 +266,9 @@
                 params.append('page', page);
 
                 var url = this._baseUrl + '/movie/' + id + '/similar?' + params.toString();
-                return this._makeRequest(url);
+                return this._makeRequest(url, { method: 'GET' });
             },
 
-            // Crédits d'un film
             getMovieCredits: function (id) {
                 if (!id) {
                     return WinJS.Promise.wrapError(new Error('ID du film requis'));
@@ -284,14 +282,13 @@
                 }
 
                 var that = this;
-                return this._makeRequest(this._baseUrl + '/movie/' + id + '/credits')
+                return this._makeRequest(this._baseUrl + '/movie/' + id + '/credits', { method: 'GET' })
                     .then(function (data) {
                         that._setCache(cacheKey, data);
                         return data;
                     });
             },
 
-            // Vidéos d'un film
             getMovieVideos: function (id) {
                 if (!id) {
                     return WinJS.Promise.wrapError(new Error('ID du film requis'));
@@ -305,14 +302,13 @@
                 }
 
                 var that = this;
-                return this._makeRequest(this._baseUrl + '/movie/' + id + '/videos')
+                return this._makeRequest(this._baseUrl + '/movie/' + id + '/videos', { method: 'GET' })
                     .then(function (data) {
                         that._setCache(cacheKey, data);
                         return data;
                     });
             },
 
-            // Recherche multi-critères
             multiSearch: function (query, page) {
                 if (!query || !query.trim()) {
                     return WinJS.Promise.wrapError(new Error('La requête de recherche ne peut pas être vide'));
@@ -324,7 +320,7 @@
                 params.append('page', page);
 
                 var url = this._baseUrl + '/search/multi?' + params.toString();
-                return this._makeRequest(url);
+                return this._makeRequest(url, { method: 'GET' });
             },
 
             // Nettoyage du cache

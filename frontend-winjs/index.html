@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Enhanced TMDB Movie Explorer - Découvrir, rechercher et explorer des films">
+    <title>MovieDB Explorer</title>
+    
+    <!-- PWA Meta -->
+    <link rel="manifest" href="/frontend-winjs/manifest.json">
+    <meta name="theme-color" content="#0078d4">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Styles de chargement -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #121212 0%, #2c2c2c 100%);
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        
+        .loading-container {
+            text-align: center;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(0, 120, 212, 0.3);
+            border-left: 4px solid #0078d4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h1 {
+            margin: 20px 0 10px;
+            font-size: 2rem;
+            font-weight: 300;
+        }
+        
+        p {
+            margin: 0;
+            opacity: 0.7;
+            font-size: 1.1rem;
+        }
+        
+        .error-container {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid #dc3545;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            max-width: 500px;
+        }
+        
+        .retry-btn {
+            background: #0078d4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.3s ease;
+        }
+        
+        .retry-btn:hover {
+            background: #005a9e;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-container">
+        <div class="loading-spinner"></div>
+        <h1>🎬 MovieDB Explorer</h1>
+        <p id="loadingText">Chargement de l'application...</p>
+        
+        <div id="errorContainer" class="error-container" style="display: none;">
+            <h3>❌ Erreur de Chargement</h3>
+            <p id="errorMessage">Une erreur est survenue lors du chargement de l'application.</p>
+            <button class="retry-btn" onclick="location.reload()">
+                🔄 Réessayer
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Fonction pour afficher une erreur
+        function showError(message) {
+            document.getElementById('loadingText').style.display = 'none';
+            document.querySelector('.loading-spinner').style.display = 'none';
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('errorContainer').style.display = 'block';
+        }
+
+        // Fonction pour mettre à jour le texte de chargement
+        function updateLoadingText(text) {
+            document.getElementById('loadingText').textContent = text;
+        }
+
+        // Vérification du navigateur et des fonctionnalités requises
+        function checkBrowserSupport() {
+            var supported = true;
+            var missing = [];
+
+            if (!window.Promise) {
+                missing.push('Promises');
+                supported = false;
+            }
+            
+            if (!window.localStorage) {
+                missing.push('localStorage');
+                supported = false;
+            }
+            
+            if (!window.fetch) {
+                missing.push('Fetch API');
+                supported = false;
+            }
+
+            if (!supported) {
+                showError('Votre navigateur ne supporte pas certaines fonctionnalités requises: ' + missing.join(', ') + '. Veuillez utiliser un navigateur plus récent.');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Chargement de l'application
+        function loadApplication() {
+            updateLoadingText('Vérification du navigateur...');
+            
+            if (!checkBrowserSupport()) {
+                return;
+            }
+
+            updateLoadingText('Vérification de la connectivité...');
+
+            // Test de la connexion API
+            fetch('/api/health')
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw new Error('API non disponible (Status: ' + response.status + ')');
+                    }
+                    return response.json();
+                })
+                .then(function(healthData) {
+                    console.log('✅ API Health Check:', healthData);
+                    updateLoadingText('Chargement de l\'interface...');
+                    
+                    // Redirection vers la page principale après un petit délai
+                    setTimeout(function() {
+                        window.location.href = '/frontend-winjs/pages/home/home.html';
+                    }, 500);
+                })
+                .catch(function(error) {
+                    console.error('❌ Erreur de connexion API:', error);
+                    
+                    // Essayer de charger l'application quand même (mode offline)
+                    updateLoadingText('Mode hors ligne - Chargement...');
+                    
+                    setTimeout(function() {
+                        window.location.href = '/frontend-winjs/pages/home/home.html';
+                    }, 1000);
+                });
+        }
+
+        // Enregistrement du Service Worker
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                        console.log('✅ Service Worker enregistré:', registration);
+                    })
+                    .catch(function(error) {
+                        console.warn('⚠️ Échec Service Worker:', error);
+                        // Continue sans Service Worker
+                    });
+            }
+        }
+
+        // Démarrage de l'application
+        function startApplication() {
+            try {
+                registerServiceWorker();
+                loadApplication();
+            } catch (error) {
+                console.error('❌ Erreur fatale:', error);
+                showError('Erreur fatale lors du démarrage: ' + error.message);
+            }
+        }
+
+        // Événements
+        document.addEventListener('DOMContentLoaded', startApplication);
+
+        // Gestion des erreurs globales
+        window.addEventListener('error', function(e) {
+            console.error('❌ Erreur JavaScript:', e.error);
+            showError('Erreur JavaScript: ' + e.error.message);
+        });
+
+        window.addEventListener('unhandledrejection', function(e) {
+            console.error('❌ Promise rejetée:', e.reason);
+            showError('Erreur de promesse: ' + (e.reason.message || e.reason));
+        });
+    </script>
+</body>
+</html>

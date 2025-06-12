@@ -17,7 +17,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
-    <!-- Styles personnalisés -->
+    <!-- Styles personnalisés - ORDRE IMPORTANT -->
+    <link href="../../css/main.css" rel="stylesheet" />
+    <link href="../../css/movieApp.css" rel="stylesheet" />
     <link href="home.css" rel="stylesheet" />
     
     <!-- Scripts WinJS -->
@@ -263,7 +265,10 @@
     <!-- Scripts Bootstrap -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     
-    <!-- Scripts de l'application -->
+    <!-- Scripts de l'application - ORDRE IMPORTANT -->
+    <script type="text/javascript" src="../../js/ressources/ressources.js"></script>
+    <script type="text/javascript" src="../../js/constants/constants.js"></script>
+    <script type="text/javascript" src="../../js/config/config.js"></script>
     <script type="text/javascript" src="../../js/models/movieModel.js"></script>
     <script type="text/javascript" src="../../js/views/movieView.js"></script>
     <script type="text/javascript" src="../../js/controllers/movieController.js"></script>
@@ -335,173 +340,5 @@
 
         })();
     </script>
-
-    <!-- Styles CSS personnalisés intégrés -->
-    <style>
-        /* Styles personnalisés pour l'intégration WinJS/Bootstrap */
-        :root {
-            --primary-color: #0078d4;
-            --secondary-color: #1a1a1a;
-            --accent-color: #ff6b35;
-            --text-light: #ffffff;
-            --bg-dark: #121212;
-            --card-bg: #1e1e1e;
-            --border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        body.win-type-body {
-            background: linear-gradient(135deg, var(--bg-dark) 0%, #2c2c2c 100%);
-            color: var(--text-light);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
-        }
-
-        .movieApp.fragment {
-            width: 100%;
-            height: 100vh;
-        }
-
-        .search-container {
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 1rem;
-            margin: 1rem 0;
-            border: 1px solid var(--border-color);
-        }
-
-        .stats-bar {
-            background: var(--card-bg);
-            border-radius: 8px;
-            padding: 0.75rem;
-            margin: 0.5rem 0;
-            border: 1px solid var(--border-color);
-        }
-
-        .movie-grid-container {
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 1rem;
-            border: 1px solid var(--border-color);
-        }
-
-        .pagination-custom {
-            background: var(--card-bg);
-            border-radius: 8px;
-            padding: 1rem;
-            border: 1px solid var(--border-color);
-        }
-
-        .no-results-container {
-            text-align: center;
-            padding: 2rem;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        /* Intégration des contrôles WinJS avec Bootstrap */
-        .win-textbox, .win-dropdown {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid var(--border-color);
-            color: var(--text-light);
-            border-radius: 6px;
-            padding: 0.5rem;
-            width: 100%;
-        }
-
-        .win-textbox:focus, .win-dropdown:focus {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: var(--primary-color);
-            outline: none;
-            box-shadow: 0 0 0 0.2rem rgba(0, 120, 212, 0.25);
-        }
-
-        .win-button {
-            background: linear-gradient(45deg, var(--primary-color), #005a9e);
-            border: none;
-            border-radius: 6px;
-            padding: 0.75rem 1.5rem;
-            color: white;
-            margin: 0.25rem;
-            transition: all 0.3s ease;
-        }
-
-        .win-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 120, 212, 0.3);
-        }
-
-        .navbar-custom {
-            background: rgba(26, 26, 26, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        /* Responsive pour les types WinJS */
-        @media (max-width: 768px) {
-            .portrait_only { display: inline; }
-            .landscape_only { display: none; }
-        }
-
-        @media (min-width: 769px) {
-            .portrait_only { display: none; }
-            .landscape_only { display: inline; }
-        }
-
-        /* Styles pour les cartes de film */
-        .movie-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            border: 1px solid var(--border-color);
-            height: 100%;
-            cursor: pointer;
-        }
-
-        .movie-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 15px 30px rgba(0, 120, 212, 0.3);
-            border-color: var(--primary-color);
-        }
-
-        .movie-poster {
-            width: 100%;
-            height: 280px;
-            object-fit: cover;
-        }
-
-        .movie-info {
-            padding: 1rem;
-            height: 110px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .movie-title {
-            font-size: 0.95rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            line-height: 1.2;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-        }
-
-        .movie-overlay {
-            background: rgba(0, 0, 0, 0.8);
-            transition: opacity 0.3s ease;
-        }
-
-        /* Animation de fondu pour le chargement */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .movie-card {
-            animation: fadeIn 0.5s ease forwards;
-        }
-    </style>
 </body>
 </html>
