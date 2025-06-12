@@ -1,0 +1,39 @@
+# Node.js
+backend/node_modules/
+backend/.env
+.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+# OS-specific
+Thumbs.db
+ehthumbs.db
+Icon?
+Desktop.ini
+
+# WinJS library (if downloaded via lib/)
+lib/
+
+# Build output
+dist/
+build/
+
+# Frontend assets cache or temp
+.cache/
+*.tmp
+
+# VS Code or other IDEs
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Runtime files
+*.pid
+*.seed
+
+# Optional: exclude compiled JS from TS (if any)
+*.tsbuildinfo

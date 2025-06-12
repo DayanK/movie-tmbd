@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title> Movie Films TMDB</title>
+  <link rel="stylesheet" href="../../lib/winjs-4.0.1/css/ui-dark.css">
+  <link rel="stylesheet" href="home.css">
+  <script src="../../lib/winjs-4.0.1/js/base.js"></script>
+  <script src="../../lib/winjs-4.0.1/js/ui.js"></script>
+  <style>
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 16px;
+      padding: 1rem;
+    }
+    .movie-item {
+      text-align: center;
+      font-family: sans-serif;
+    }
+    .movie-item img {
+      width: 100%;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+
+
+<body class="win-type-body">
+  <div id="contentHost"></div>
+
+  <!-- Page Content -->
+  <div id="page">
+    <h2>Movie Films TMDB</h2>
+    <div>
+      <label for="genreFilter">Genre :</label>
+      <select id="genreFilter"></select>
+    </div>
+    <div id="movieGrid" class="grid"></div>
+  </div>
+
+ 
+  <script src="../../js/controllers/movieController.js"></script>
+  <script src="../../js/models/movieModel.js"></script>
+  <script src="../../js/views/movieView.js"></script>
+</body>
+</html>

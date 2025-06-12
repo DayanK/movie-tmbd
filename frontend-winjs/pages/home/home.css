@@ -1,0 +1,15 @@
+.genre-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
+}
+
+.genre-item {
+    background-color: #0078D7;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: default;
+}
