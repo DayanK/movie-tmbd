@@ -1,48 +1,507 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <title> Movie Films TMDB</title>
-  <link rel="stylesheet" href="../../lib/winjs-4.0.1/css/ui-dark.css">
-  <link rel="stylesheet" href="home.css">
-  <script src="../../lib/winjs-4.0.1/js/base.js"></script>
-  <script src="../../lib/winjs-4.0.1/js/ui.js"></script>
-  <style>
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 16px;
-      padding: 1rem;
-    }
-    .movie-item {
-      text-align: center;
-      font-family: sans-serif;
-    }
-    .movie-item img {
-      width: 100%;
-      border-radius: 8px;
-    }
-  </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Enhanced TMDB Movie Explorer - Découvrir, rechercher et explorer des films">
+    <meta name="keywords" content="films, TMDB, cinéma, recherche, découverte">
+    <title>Enhanced TMDB Movie Explorer</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <!-- WinJS CSS -->
+    <link rel="stylesheet" href="../../lib/winjs-4.0.1/css/ui-dark.css">
+    
+    <!-- Bootstrap CSS pour le design responsive -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Styles personnalisés -->
+    <link href="home.css" rel="stylesheet" />
+    
+    <!-- Scripts WinJS -->
+    <script src="../../lib/winjs-4.0.1/js/base.js"></script>
+    <script src="../../lib/winjs-4.0.1/js/ui.js"></script>
 </head>
 
-
 <body class="win-type-body">
-  <div id="contentHost"></div>
+    <!-- Fragment principal de l'application -->
+    <div class="movieApp fragment" data-win-control="WinJS.UI.HtmlControl">
+        <div id="movieAppController" class="data-container">
+            <section aria-label="Contenu principal" role="main" class="animationElement">
+                
+                <!-- Navigation -->
+                <nav class="navbar navbar-expand-lg navbar-custom fixed-top" role="navigation">
+                    <div class="container">
+                        <a class="navbar-brand text-light win-type-title" href="#" aria-label="MovieDB Explorer Accueil">
+                            <span class="fa fa-film" aria-hidden="true"></span>
+                            <span class="caption-field" data-win-res="{textContent: 'app.title'}">MovieDB Explorer</span>
+                        </a>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                                aria-controls="navbarNav" aria-expanded="false" aria-label="Basculer la navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarNav">
+                            <ul class="navbar-nav ms-auto">
+                                <li class="nav-item">
+                                    <a class="nav-link text-light win-type-caption" href="#" id="homeLink">
+                                        <span class="fa fa-home" aria-hidden="true"></span>
+                                        <span data-win-res="{textContent: 'nav.home'}">Accueil</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-light win-type-caption" href="#" id="favoritesLink">
+                                        <span class="fa fa-heart" aria-hidden="true"></span>
+                                        <span data-win-res="{textContent: 'nav.favorites'}">Favoris</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-light win-type-caption" href="#" id="categoriesDropdown" 
+                                       role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span class="fa fa-list" aria-hidden="true"></span>
+                                        <span data-win-res="{textContent: 'nav.categories'}">Catégories</span>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-dark">
+                                        <li><a class="dropdown-item win-type-caption" href="#" data-category="popular">
+                                            <span class="fa fa-fire"></span>
+                                            <span data-win-res="{textContent: 'category.popular'}">Populaires</span>
+                                        </a></li>
+                                        <li><a class="dropdown-item win-type-caption" href="#" data-category="top-rated">
+                                            <span class="fa fa-star"></span>
+                                            <span data-win-res="{textContent: 'category.topRated'}">Mieux notés</span>
+                                        </a></li>
+                                        <li><a class="dropdown-item win-type-caption" href="#" data-category="upcoming">
+                                            <span class="fa fa-clock"></span>
+                                            <span data-win-res="{textContent: 'category.upcoming'}">À venir</span>
+                                        </a></li>
+                                        <li><a class="dropdown-item win-type-caption" href="#" data-category="now-playing">
+                                            <span class="fa fa-play"></span>
+                                            <span data-win-res="{textContent: 'category.nowPlaying'}">Au cinéma</span>
+                                        </a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
 
-  <!-- Page Content -->
-  <div id="page">
-    <h2>Movie Films TMDB</h2>
-    <div>
-      <label for="genreFilter">Genre :</label>
-      <select id="genreFilter"></select>
+                <!-- Zone de contenu principale -->
+                <div class="contentarea win-type-body">
+                    <div class="header-separator"></div>
+                    
+                    <!-- En-tête de contenu -->
+                    <div class="content-header">
+                        <div class="half-circle half-circle-textcolor">&nbsp;</div>
+                        <div class="content-header-line win-type-caption">
+                            <span class="id-field"></span>
+                            <span class="caption-field" data-win-res="{textContent: 'movie.explorer'}">Explorateur de Films</span>
+                            <span class="date-field"></span>
+                        </div>
+                    </div>
+
+                    <!-- Zone centrale -->
+                    <div class="centerarea">
+                        
+                        <!-- Section de recherche -->
+                        <div class="search-container" aria-labelledby="search-heading">
+                            <div class="line-separator"></div>
+                            <div class="field_line">
+                                <span class="large_field win-type-subtitle" id="search-heading" 
+                                      data-win-res="{textContent: 'search.title'}">Recherche de Films</span>
+                            </div>
+                            <div class="line-separator"></div>
+                            
+                            <div class="field_line field_line_odd">
+                                <span class="label win-type-caption portrait_only" 
+                                      data-win-res="{textContent: 'search.query'}">Recherche :</span>
+                                <span class="label landscape_only" 
+                                      data-win-res="{textContent: 'search.query'}">Recherche :</span>
+                                <input class="input_field win-textbox" type="text" id="searchInput"
+                                       placeholder="Entrez un titre de film..."
+                                       aria-describedby="search-help" />
+                                <div id="search-help" class="form-text text-muted win-type-caption">
+                                    Appuyez sur Entrée pour rechercher ou tapez au moins 3 caractères
+                                </div>
+                            </div>
+                            
+                            <div class="field_line field_line_even">
+                                <span class="label win-type-caption portrait_only" 
+                                      data-win-res="{textContent: 'search.genre'}">Genre :</span>
+                                <span class="label landscape_only" 
+                                      data-win-res="{textContent: 'search.genre'}">Genre :</span>
+                                <select class="input_field win-dropdown" id="genreFilter" aria-label="Filtrer par genre">
+                                    <option value="" data-win-res="{textContent: 'search.allGenres'}">Tous les genres</option>
+                                </select>
+                            </div>
+                            
+                            <div class="field_line field_line_odd">
+                                <span class="label win-type-caption portrait_only" 
+                                      data-win-res="{textContent: 'search.sort'}">Tri :</span>
+                                <span class="label landscape_only" 
+                                      data-win-res="{textContent: 'search.sort'}">Tri :</span>
+                                <select class="input_field win-dropdown" id="sortBy" aria-label="Trier les films par">
+                                    <option value="popularity.desc" data-win-res="{textContent: 'sort.popularityDesc'}">Popularité ↓</option>
+                                    <option value="popularity.asc" data-win-res="{textContent: 'sort.popularityAsc'}">Popularité ↑</option>
+                                    <option value="release_date.desc" data-win-res="{textContent: 'sort.releaseDateDesc'}">Date de sortie ↓</option>
+                                    <option value="release_date.asc" data-win-res="{textContent: 'sort.releaseDateAsc'}">Date de sortie ↑</option>
+                                    <option value="vote_average.desc" data-win-res="{textContent: 'sort.ratingDesc'}">Note ↓</option>
+                                    <option value="vote_average.asc" data-win-res="{textContent: 'sort.ratingAsc'}">Note ↑</option>
+                                    <option value="title.asc" data-win-res="{textContent: 'sort.titleAsc'}">Titre A-Z</option>
+                                    <option value="title.desc" data-win-res="{textContent: 'sort.titleDesc'}">Titre Z-A</option>
+                                </select>
+                            </div>
+                            
+                            <div class="line-separator"></div>
+                            <div class="field_line field_line_full">
+                                <div class="button_line">
+                                    <div class="button-element">
+                                        <button id="searchBtn" class="text-lightcolor titlearea-bkg win-button"
+                                                aria-label="Rechercher des films">
+                                            <span class="win-type-title" data-win-res="{textContent: 'button.search'}">Rechercher</span>
+                                        </button>
+                                    </div>
+                                    <div class="button-element">
+                                        <button id="clearBtn" class="text-lightcolor titlearea-bkg win-button"
+                                                aria-label="Effacer tous les filtres">
+                                            <span class="win-type-title" data-win-res="{textContent: 'button.clear'}">Effacer</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Barre de statistiques -->
+                        <div class="stats-bar" aria-labelledby="stats-heading">
+                            <div class="line-separator"></div>
+                            <div class="field_line">
+                                <span class="label win-type-caption" id="resultsCount" aria-live="polite">Chargement des films...</span>
+                                <span class="input_field win-type-caption" id="currentPage" aria-live="polite">Page 1</span>
+                            </div>
+                        </div>
+
+                        <!-- Indicateur de chargement -->
+                        <div class="field_line" id="loadingSpinner" aria-hidden="true" style="display: none;">
+                            <span class="label win-type-caption portrait_only" 
+                                  data-win-res="{textContent: 'loading.progress'}">Chargement :</span>
+                            <span class="label landscape_only" 
+                                  data-win-res="{textContent: 'loading.progress'}">Chargement :</span>
+                            <progress class="progress_field win-progress-bar" min="0" max="100" value="50"></progress>
+                            <span class="large_field win-type-caption" 
+                                  data-win-res="{textContent: 'loading.movies'}">Chargement des films...</span>
+                        </div>
+
+                        <!-- Grille de films -->
+                        <div class="movie-grid-section" aria-labelledby="movies-heading">
+                            <div class="line-separator"></div>
+                            <div class="field_line">
+                                <span class="large_field win-type-subtitle" id="movies-heading">Films</span>
+                            </div>
+                            <div class="line-separator"></div>
+                            
+                            <div class="movie-grid-container">
+                                <div class="row" id="movieGrid" role="grid" aria-label="Grille de films">
+                                    <!-- Les films seront peuplés ici -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Aucun résultat -->
+                        <div class="field_line d-none" id="noResults" role="status" aria-live="polite">
+                            <div class="no-results-container">
+                                <span class="fa fa-film fa-4x mb-3 opacity-50" aria-hidden="true"></span>
+                                <span class="large_field win-type-subtitle" 
+                                      data-win-res="{textContent: 'noResults.title'}">Aucun film trouvé</span>
+                                <span class="input_field win-type-caption" 
+                                      data-win-res="{textContent: 'noResults.message'}">Essayez d'ajuster vos critères de recherche</span>
+                            </div>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="pagination-section" id="paginationContainer">
+                            <div class="line-separator"></div>
+                            <nav class="pagination-custom" aria-label="Pagination des films">
+                                <ul class="pagination justify-content-center mb-0" id="pagination">
+                                    <!-- La pagination sera peuplée ici -->
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Messages d'erreur -->
+                <div class="error-message win-type-subtitle" style="display: none;"
+                     data-win-bind="style.display: error.displayErrorMsg; textContent: error.errorMsg"></div>
+            </section>
+        </div>
     </div>
-    <div id="movieGrid" class="grid"></div>
-  </div>
 
- 
-  <script src="../../js/controllers/movieController.js"></script>
-  <script src="../../js/models/movieModel.js"></script>
-  <script src="../../js/views/movieView.js"></script>
+    <!-- Modal des détails du film -->
+    <div class="modal fade" id="movieModal" tabindex="-1" aria-labelledby="movieModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-light win-type-title" id="movieModalTitle">Détails du Film</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body win-type-body" id="movieModalBody">
+                    <!-- Les détails du film seront peuplés ici -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary win-button" data-bs-dismiss="modal">
+                        <span class="win-type-caption" data-win-res="{textContent: 'button.close'}">Fermer</span>
+                    </button>
+                    <button type="button" class="btn btn-custom win-button" id="addToFavorites">
+                        <span class="fa fa-heart" aria-hidden="true"></span>
+                        <span class="win-type-caption" data-win-res="{textContent: 'button.addFavorite'}">Ajouter aux favoris</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts Bootstrap -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Scripts de l'application -->
+    <script type="text/javascript" src="../../js/models/movieModel.js"></script>
+    <script type="text/javascript" src="../../js/views/movieView.js"></script>
+    <script type="text/javascript" src="../../js/controllers/movieController.js"></script>
+    <script type="text/javascript" src="../../js/app.js"></script>
+
+    <!-- Script d'initialisation spécifique à la page -->
+    <script type="text/javascript">
+        (function () {
+            "use strict";
+
+            // Définition de la page WinJS
+            WinJS.UI.Pages.define("/frontend-winjs/pages/home/home.html", {
+                ready: function (element, options) {
+                    console.log("Page home.html prête - Initialisation des contrôles");
+                    
+                    // Initialisation des contrôles WinJS sur la page
+                    return WinJS.UI.processAll(element).then(function () {
+                        console.log("Contrôles WinJS traités avec succès");
+                        
+                        // Ajout des écouteurs d'événements pour les catégories
+                        var categoryLinks = element.querySelectorAll('[data-category]');
+                        categoryLinks.forEach(function (link) {
+                            link.addEventListener('click', function (e) {
+                                e.preventDefault();
+                                var category = this.dataset.category;
+                                if (window.movieController) {
+                                    window.movieController._setCategory(category);
+                                }
+                            });
+                        });
+                        
+                        // Gestion des événements AppBar si nécessaire
+                        if (typeof AppBar !== 'undefined') {
+                            AppBar.handleEvent = function (eventType, eventName, event) {
+                                console.log("Événement AppBar:", eventType, eventName);
+                                
+                                switch (eventName) {
+                                    case 'clickSearch':
+                                        if (window.movieController) {
+                                            window.movieController._performSearch();
+                                        }
+                                        break;
+                                    case 'clickClear':
+                                        if (window.movieController) {
+                                            window.movieController._clearAllFilters();
+                                        }
+                                        break;
+                                }
+                            };
+                        }
+                    });
+                },
+
+                unload: function () {
+                    console.log("Déchargement de la page home.html");
+                    // Nettoyage si nécessaire
+                },
+
+                updateLayout: function (element) {
+                    console.log("Mise à jour de la mise en page");
+                    // Gestion des changements de mise en page responsive
+                }
+            });
+
+            // Navigation vers la page d'accueil si c'est la page principale
+            if (WinJS.Navigation) {
+                WinJS.Navigation.navigate("/frontend-winjs/pages/home/home.html");
+            }
+
+        })();
+    </script>
+
+    <!-- Styles CSS personnalisés intégrés -->
+    <style>
+        /* Styles personnalisés pour l'intégration WinJS/Bootstrap */
+        :root {
+            --primary-color: #0078d4;
+            --secondary-color: #1a1a1a;
+            --accent-color: #ff6b35;
+            --text-light: #ffffff;
+            --bg-dark: #121212;
+            --card-bg: #1e1e1e;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body.win-type-body {
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #2c2c2c 100%);
+            color: var(--text-light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        .movieApp.fragment {
+            width: 100%;
+            height: 100vh;
+        }
+
+        .search-container {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .stats-bar {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .movie-grid-container {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .pagination-custom {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .no-results-container {
+            text-align: center;
+            padding: 2rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Intégration des contrôles WinJS avec Bootstrap */
+        .win-textbox, .win-dropdown {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+            border-radius: 6px;
+            padding: 0.5rem;
+            width: 100%;
+        }
+
+        .win-textbox:focus, .win-dropdown:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(0, 120, 212, 0.25);
+        }
+
+        .win-button {
+            background: linear-gradient(45deg, var(--primary-color), #005a9e);
+            border: none;
+            border-radius: 6px;
+            padding: 0.75rem 1.5rem;
+            color: white;
+            margin: 0.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .win-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 120, 212, 0.3);
+        }
+
+        .navbar-custom {
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* Responsive pour les types WinJS */
+        @media (max-width: 768px) {
+            .portrait_only { display: inline; }
+            .landscape_only { display: none; }
+        }
+
+        @media (min-width: 769px) {
+            .portrait_only { display: none; }
+            .landscape_only { display: inline; }
+        }
+
+        /* Styles pour les cartes de film */
+        .movie-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0, 120, 212, 0.3);
+            border-color: var(--primary-color);
+        }
+
+        .movie-poster {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+        }
+
+        .movie-info {
+            padding: 1rem;
+            height: 110px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .movie-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .movie-overlay {
+            background: rgba(0, 0, 0, 0.8);
+            transition: opacity 0.3s ease;
+        }
+
+        /* Animation de fondu pour le chargement */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .movie-card {
+            animation: fadeIn 0.5s ease forwards;
+        }
+    </style>
 </body>
 </html>

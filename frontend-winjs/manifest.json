@@ -1,0 +1,209 @@
+{
+  "name": "MovieDB Explorer - Découverte de Films",
+  "short_name": "MovieDB Explorer",
+  "description": "Découvrez et explorez des milliers de films avec l'API TMDB. Recherchez, filtrez et ajoutez vos films préférés à vos favoris.",
+  "version": "2.0.0",
+  "start_url": "/frontend-winjs/pages/home/home.html",
+  "scope": "/frontend-winjs/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#0078d4",
+  "background_color": "#121212",
+  
+  "icons": [
+    {
+      "src": "/images/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  
+  "screenshots": [
+    {
+      "src": "/images/screenshots/screenshot-desktop-1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Interface principale de découverte de films"
+    },
+    {
+      "src": "/images/screenshots/screenshot-desktop-2.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Détails d'un film avec informations complètes"
+    },
+    {
+      "src": "/images/screenshots/screenshot-mobile-1.png",
+      "sizes": "375x667",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Version mobile responsive"
+    },
+    {
+      "src": "/images/screenshots/screenshot-mobile-2.png",
+      "sizes": "375x667",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Recherche et filtres sur mobile"
+    }
+  ],
+  
+  "categories": [
+    "entertainment",
+    "lifestyle",
+    "utilities"
+  ],
+  
+  "lang": "fr-FR",
+  
+  "shortcuts": [
+    {
+      "name": "Recherche de Films",
+      "short_name": "Recherche",
+      "description": "Rechercher des films par titre",
+      "url": "/frontend-winjs/pages/home/home.html?action=search",
+      "icons": [
+        {
+          "src": "/images/icons/shortcut-search.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Films Populaires",
+      "short_name": "Populaires",
+      "description": "Voir les films populaires du moment",
+      "url": "/frontend-winjs/pages/home/home.html?category=popular",
+      "icons": [
+        {
+          "src": "/images/icons/shortcut-popular.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Mes Favoris",
+      "short_name": "Favoris",
+      "description": "Accéder à ma liste de films favoris",
+      "url": "/frontend-winjs/pages/home/home.html?category=favorites",
+      "icons": [
+        {
+          "src": "/images/icons/shortcut-favorites.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Films à Venir",
+      "short_name": "À Venir",
+      "description": "Découvrir les prochaines sorties cinéma",
+      "url": "/frontend-winjs/pages/home/home.html?category=upcoming",
+      "icons": [
+        {
+          "src": "/images/icons/shortcut-upcoming.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://moviedb-explorer.netlify.app/manifest.json"
+    }
+  ],
+  
+  "prefer_related_applications": false,
+  
+  "protocol_handlers": [
+    {
+      "protocol": "web+moviedb",
+      "url": "/frontend-winjs/pages/home/home.html?movie=%s"
+    }
+  ],
+  
+  "file_handlers": [
+    {
+      "action": "/frontend-winjs/pages/home/home.html",
+      "accept": {
+        "application/json": [".json"],
+        "text/plain": [".txt"]
+      }
+    }
+  ],
+  
+  "share_target": {
+    "action": "/frontend-winjs/pages/home/home.html",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  
+  "handle_links": "preferred",
+  
+  "id": "moviedb-explorer-winjs",
+  
+  "iarc_rating_id": "e58c174a-81d2-5c3c-32cc-34b8de4a52e9"
+}
