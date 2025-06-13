@@ -1,47 +1,782 @@
+/* frontend-winjs/css/main.css */
+/* CSS Principal optimisé pour MovieDB Explorer WinJS */
+
+/* =====================================
+   Variables CSS et Configuration
+   ===================================== */
+:root {
+    /* Couleurs principales */
+    --primary-color: #0078d4;
+    --primary-hover: #005a9e;
+    --primary-light: rgba(0, 120, 212, 0.1);
+    --primary-dark: #004578;
+    
+    /* Couleurs secondaires */
+    --secondary-color: #1a1a1a;
+    --accent-color: #ff6b35;
+    --accent-hover: #e55a2b;
+    
+    /* Couleurs de texte */
+    --text-light: #ffffff;
+    --text-muted: rgba(255, 255, 255, 0.7);
+    --text-disabled: rgba(255, 255, 255, 0.4);
+    --text-dark: #2c2c2c;
+    
+    /* Arrière-plans */
+    --bg-dark: #121212;
+    --bg-darker: #0a0a0a;
+    --bg-light: #f8f9fa;
+    --card-bg: #1e1e1e;
+    --card-hover: #2a2a2a;
+    --overlay-bg: rgba(0, 0, 0, 0.8);
+    
+    /* Bordures */
+    --border-color: rgba(255, 255, 255, 0.1);
+    --border-hover: rgba(255, 255, 255, 0.2);
+    --border-active: var(--primary-color);
+    
+    /* États */
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #17a2b8;
+    
+    /* Espacements */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-xxl: 3rem;
+    
+    /* Rayons de bordure */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-round: 50%;
+    
+    /* Ombres */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.6);
+    
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+    
+    /* Z-index */
+    --z-dropdown: 1000;
+    --z-sticky: 1020;
+    --z-fixed: 1030;
+    --z-modal-backdrop: 1040;
+    --z-modal: 1050;
+    --z-popover: 1060;
+    --z-tooltip: 1070;
+    --z-toast: 9999;
+}
+
+/* =====================================
+   Reset et Base
+   ===================================== */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    line-height: 1.5;
+    scroll-behavior: smooth;
+}
+
 body {
-  font-family: 'Segoe UI', sans-serif;
-  margin: 0;
-  background-color: #1e1e1e;
-  color: white;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', 'Segoe UI Web Regular', 'Segoe UI Symbol', 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, var(--bg-dark) 0%, var(--secondary-color) 100%);
+    color: var(--text-light);
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
-header {
-  display: flex;
-  gap: 10px;
-  padding: 10px;
-  background: #2c2c2c;
-  align-items: center;
+/* Scrollbars personnalisées */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
 }
 
-.movie-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 16px;
-  padding: 16px;
+::-webkit-scrollbar-track {
+    background: var(--bg-darker);
 }
 
-.movie-item {
-  background: #333;
-  border-radius: 8px;
-  overflow: hidden;
-  text-align: center;
-  transition: transform 0.2s;
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: var(--radius-sm);
 }
 
-.movie-item:hover {
-  transform: scale(1.05);
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-hover);
 }
 
-.movie-poster {
-  width: 100%;
-  height: 225px;
-  object-fit: cover;
+/* =====================================
+   Typography WinJS
+   ===================================== */
+.win-type-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: var(--spacing-md);
 }
 
-#paginationControls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin: 20px;
+.win-type-subtitle {
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.4;
+    margin-bottom: var(--spacing-sm);
+}
+
+.win-type-caption {
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.4;
+}
+
+.win-type-body {
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+/* =====================================
+   Contrôles de Formulaire WinJS
+   ===================================== */
+.win-textbox, .win-dropdown {
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid var(--border-color);
+    color: var(--text-light);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    font-size: 14px;
+    font-family: inherit;
+    transition: all var(--transition-normal);
+    width: 100%;
+    max-width: none;
+    outline: none;
+}
+
+.win-textbox:focus, .win-dropdown:focus {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-light);
+    transform: scale(1.02);
+}
+
+.win-textbox:hover, .win-dropdown:hover {
+    border-color: var(--border-hover);
+}
+
+.win-textbox::placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.win-textbox:disabled, .win-dropdown:disabled {
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--text-disabled);
+    cursor: not-allowed;
+}
+
+.win-dropdown option {
+    background: var(--card-bg);
+    color: var(--text-light);
+    padding: var(--spacing-sm);
+}
+
+/* Progress bar WinJS */
+.win-progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--border-color);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    appearance: none;
+    position: relative;
+}
+
+.win-progress-bar::-webkit-progress-bar {
+    background: var(--border-color);
+    border-radius: var(--radius-sm);
+}
+
+.win-progress-bar::-webkit-progress-value {
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    border-radius: var(--radius-sm);
+    transition: width var(--transition-normal);
+}
+
+.win-progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-image: linear-gradient(
+        -45deg,
+        rgba(255, 255, 255, 0.2) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0.2) 75%,
+        transparent 75%,
+        transparent
+    );
+    background-size: 50px 50px;
+    animation: progressSlide 2s linear infinite;
+}
+
+@keyframes progressSlide {
+    0% { background-position: 0 0; }
+    100% { background-position: 50px 50px; }
+}
+
+/* =====================================
+   Boutons WinJS
+   ===================================== */
+.win-button {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+    border: none;
+    border-radius: var(--radius-md);
+    color: white;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: var(--spacing-md) var(--spacing-xl);
+    margin: var(--spacing-xs);
+    min-width: 120px;
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+}
+
+.win-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left var(--transition-slow);
+}
+
+.win-button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    background: linear-gradient(135deg, var(--primary-hover), var(--primary-color));
+    text-decoration: none;
+    color: white;
+}
+
+.win-button:hover::before {
+    left: 100%;
+}
+
+.win-button:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+}
+
+.win-button:focus {
+    outline: 2px solid var(--primary-light);
+    outline-offset: 2px;
+}
+
+.win-button:disabled {
+    background: var(--text-disabled);
+    color: var(--text-muted);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.win-button:disabled:hover {
+    transform: none;
+    background: var(--text-disabled);
+}
+
+/* Variantes de boutons */
+.win-button.btn-secondary {
+    background: linear-gradient(135deg, #6c757d, #5a6268);
+}
+
+.win-button.btn-success {
+    background: linear-gradient(135deg, var(--success-color), #1e7e34);
+}
+
+.win-button.btn-warning {
+    background: linear-gradient(135deg, var(--warning-color), #e0a800);
+    color: var(--text-dark);
+}
+
+.win-button.btn-danger {
+    background: linear-gradient(135deg, var(--danger-color), #c82333);
+}
+
+/* =====================================
+   Layout et Structure
+   ===================================== */
+.movieApp.fragment {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.data-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.contentarea {
+    flex: 1;
+    padding-top: 80px; /* Pour compenser la navbar fixe */
+}
+
+.centerarea {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+}
+
+/* =====================================
+   Navigation
+   ===================================== */
+.navbar-custom {
+    background: rgba(26, 26, 26, 0.95);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+    z-index: var(--z-fixed);
+}
+
+.navbar-custom .navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--text-light) !important;
+    transition: all var(--transition-fast);
+    text-decoration: none;
+}
+
+.navbar-custom .navbar-brand:hover {
+    color: var(--primary-color) !important;
+    transform: scale(1.05);
+}
+
+.navbar-custom .nav-link {
+    color: var(--text-light) !important;
+    font-weight: 500;
+    padding: var(--spacing-sm) var(--spacing-md) !important;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+    margin: 0 var(--spacing-xs);
+    text-decoration: none;
+}
+
+.navbar-custom .nav-link:hover {
+    color: var(--primary-color) !important;
+    background: var(--primary-light);
+    transform: translateY(-1px);
+}
+
+.navbar-custom .dropdown-menu {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    backdrop-filter: blur(10px);
+}
+
+.navbar-custom .dropdown-item {
+    color: var(--text-light);
+    padding: var(--spacing-sm) var(--spacing-md);
+    transition: all var(--transition-fast);
+    text-decoration: none;
+}
+
+.navbar-custom .dropdown-item:hover {
+    background: var(--primary-light);
+    color: var(--primary-color);
+}
+
+/* Navbar toggler pour mobile */
+.navbar-toggler {
+    border: none;
+    padding: 0.25rem 0.5rem;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='m4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* =====================================
+   Sections et Containers
+   ===================================== */
+.content-header {
+    position: relative;
+    margin-bottom: var(--spacing-xl);
+    text-align: center;
+}
+
+.content-header-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-lg) 0;
+    font-size: 2rem;
+    font-weight: 300;
+    color: var(--text-light);
+}
+
+.half-circle {
+    position: absolute;
+    left: 50%;
+    top: -20px;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 20px;
+    background: var(--primary-color);
+    border-radius: 20px 20px 0 0;
+}
+
+.caption-field {
+    font-size: inherit;
+    font-weight: inherit;
+    color: inherit;
+}
+
+/* Séparateurs */
+.line-separator {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+    margin: var(--spacing-md) 0;
+}
+
+.header-separator {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+    margin-bottom: var(--spacing-lg);
+}
+
+/* =====================================
+   Champs et Lignes WinJS
+   ===================================== */
+.field_line {
+    display: flex;
+    align-items: center;
+    margin: var(--spacing-md) 0;
+    min-height: 48px;
+    transition: all var(--transition-fast);
+}
+
+.field_line_odd {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.field_line_even {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.field_line_full {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+/* Labels */
+.label {
+    min-width: 120px;
+    font-weight: 500;
+    color: var(--text-light);
+    margin-right: var(--spacing-md);
+    font-size: 0.95rem;
+}
+
+.large_field {
+    flex: 1;
+    color: var(--text-light);
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.input_field {
+    flex: 1;
+    margin-left: var(--spacing-md);
+}
+
+/* =====================================
+   Containers Spécialisés
+   ===================================== */
+.search-container, 
+.stats-bar, 
+.movie-grid-section, 
+.pagination-custom {
+    background: linear-gradient(145deg, var(--card-bg), rgba(40, 40, 40, 0.8));
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    margin: var(--spacing-lg) 0;
+    backdrop-filter: blur(15px);
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.search-container::before,
+.movie-grid-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color));
+}
+
+.stats-bar {
+    padding: var(--spacing-md);
+    margin: var(--spacing-md) 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.movie-grid-container {
+    margin-top: var(--spacing-lg);
+}
+
+/* =====================================
+   Boutons et Actions
+   ===================================== */
+.button_line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    justify-content: center;
+    align-items: center;
+    margin: var(--spacing-lg) 0;
+}
+
+.button-element {
+    flex: 0 0 auto;
+}
+
+/* =====================================
+   États et Messages
+   ===================================== */
+.no-results-container {
+    text-align: center;
+    padding: var(--spacing-xxl);
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: var(--radius-lg);
+    margin: var(--spacing-xl) 0;
+}
+
+.no-results-container .fa {
+    display: block;
+    margin-bottom: var(--spacing-lg);
+    opacity: 0.3;
+}
+
+.error-message {
+    background: linear-gradient(135deg, var(--danger-color), #b91c3c);
+    color: white;
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    margin: var(--spacing-lg) 0;
+    text-align: center;
+    font-weight: 500;
+    box-shadow: var(--shadow-md);
+}
+
+/* =====================================
+   Responsive Design
+   ===================================== */
+@media (max-width: 768px) {
+    .portrait_only { 
+        display: inline !important; 
+    }
+    .landscape_only { 
+        display: none !important; 
+    }
+    
+    .field_line {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .label {
+        min-width: unset;
+        margin-right: 0;
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .input_field {
+        margin-left: 0;
+    }
+    
+    .centerarea {
+        padding: 0 var(--spacing-sm);
+    }
+    
+    .search-container,
+    .movie-grid-section {
+        padding: var(--spacing-lg);
+        margin: var(--spacing-md) 0;
+    }
+    
+    .button_line {
+        flex-direction: column;
+    }
+    
+    .win-button {
+        width: 100%;
+        margin: var(--spacing-xs) 0;
+    }
+    
+    .stats-bar {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .content-header-line {
+        font-size: 1.5rem;
+    }
+}
+
+@media (min-width: 769px) {
+    .portrait_only { 
+        display: none !important; 
+    }
+    .landscape_only { 
+        display: inline !important; 
+    }
+}
+
+@media (min-width: 1200px) {
+    .centerarea {
+        max-width: 1600px;
+    }
+}
+
+/* =====================================
+   Animations
+   ===================================== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.search-container {
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+.field_line {
+    animation: slideInFromLeft 0.4s ease forwards;
+}
+
+/* =====================================
+   Accessibilité
+   ===================================== */
+*:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+@media (prefers-contrast: high) {
+    :root {
+        --border-color: rgba(255, 255, 255, 0.3);
+        --text-muted: rgba(255, 255, 255, 0.9);
+    }
+    
+    .win-button {
+        border: 2px solid white;
+    }
+}
+
+/* =====================================
+   Print Styles
+   ===================================== */
+@media print {
+    .navbar-custom,
+    .search-container,
+    .pagination-custom,
+    .win-button {
+        display: none;
+    }
+    
+    body {
+        background: white;
+        color: black;
+    }
+    
+    .movie-card {
+        break-inside: avoid;
+    }
 }

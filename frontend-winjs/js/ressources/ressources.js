@@ -1,5 +1,5 @@
 // frontend-winjs/js/resources/resources.js
-// Fichier de ressources pour l'internationalisation avec syntaxe WinJS
+// Fichier de ressources pour l'internationalisation avec syntaxe WinJS - CORRIGÉ
 
 (function () {
     "use strict";
@@ -15,7 +15,6 @@
         }, {
             // Détection automatique de la langue
             _detectLanguage: function () {
-                // Priorité : localStorage > navigateur > défaut
                 var savedLang = localStorage.getItem('app-language');
                 if (savedLang && this._supportedLanguages.indexOf(savedLang) !== -1) {
                     return savedLang;
@@ -32,8 +31,6 @@
 
             // Chargement des ressources
             _loadResources: function () {
-                var that = this;
-                
                 // Ressources françaises (par défaut)
                 this._resources.set('fr', {
                     // Navigation
@@ -105,29 +102,20 @@
 
                 // Ressources anglaises
                 this._resources.set('en', {
-                    // Navigation
                     'nav.home': 'Home',
                     'nav.favorites': 'Favorites',
                     'nav.categories': 'Categories',
-                    
-                    // Categories
                     'category.popular': 'Popular',
                     'category.topRated': 'Top Rated',
                     'category.upcoming': 'Upcoming',
                     'category.nowPlaying': 'Now Playing',
-                    
-                    // Application
                     'app.title': 'MovieDB Explorer',
                     'movie.explorer': 'Movie Explorer',
-                    
-                    // Search
                     'search.title': 'Movie Search',
                     'search.query': 'Search',
                     'search.genre': 'Genre',
                     'search.sort': 'Sort',
                     'search.allGenres': 'All genres',
-                    
-                    // Sort
                     'sort.popularityDesc': 'Popularity ↓',
                     'sort.popularityAsc': 'Popularity ↑',
                     'sort.releaseDateDesc': 'Release Date ↓',
@@ -136,29 +124,21 @@
                     'sort.ratingAsc': 'Rating ↑',
                     'sort.titleAsc': 'Title A-Z',
                     'sort.titleDesc': 'Title Z-A',
-                    
-                    // Buttons
                     'button.search': 'Search',
                     'button.clear': 'Clear',
                     'button.close': 'Close',
                     'button.addFavorite': 'Add to Favorites',
                     'button.removeFavorite': 'Remove from Favorites',
                     'button.viewDetails': 'View Details',
-                    
-                    // Loading
                     'loading.progress': 'Loading',
                     'loading.movies': 'Loading movies...',
                     'loading.details': 'Loading details...',
                     'loading.genres': 'Loading genres...',
-                    
-                    // Messages
                     'noResults.title': 'No movies found',
                     'noResults.message': 'Try adjusting your search criteria',
                     'error.network': 'Network error. Check your connection.',
                     'error.api': 'API error. Please try again later.',
                     'error.notFound': 'Movie not found',
-                    
-                    // Movies
                     'movie.details': 'Movie Details',
                     'movie.overview': 'Overview',
                     'movie.rating': 'Rating',
@@ -180,7 +160,6 @@
                     return currentResources[key];
                 }
                 
-                // Fallback vers le français puis la valeur par défaut
                 var frenchResources = this._resources.get('fr');
                 if (frenchResources && frenchResources[key]) {
                     return frenchResources[key];
@@ -199,7 +178,6 @@
                 this._currentLanguage = languageCode;
                 localStorage.setItem('app-language', languageCode);
                 
-                // Notification du changement pour mettre à jour l'UI
                 WinJS.Application.queueEvent({
                     type: 'languageChanged',
                     detail: { language: languageCode }
@@ -208,14 +186,12 @@
                 return true;
             },
 
-            // Obtenir la langue actuelle
             getCurrentLanguage: function () {
                 return this._currentLanguage;
             },
 
-            // Obtenir les langues supportées
             getSupportedLanguages: function () {
-                return this._supportedLanguages.slice(); // Copie du tableau
+                return this._supportedLanguages.slice();
             }
         })
     });
@@ -238,7 +214,7 @@
         }
     });
 
-    // Gestionnaire pour l'attribut data-win-res
+    // CORRECTION: Gestionnaire amélioré pour l'attribut data-win-res
     WinJS.Namespace.define("WinJS.Res", {
         processAll: function (rootElement) {
             rootElement = rootElement || document;
@@ -246,10 +222,27 @@
             
             elements.forEach(function (element) {
                 try {
-                    var resData = JSON.parse(element.getAttribute('data-win-res'));
+                    var resDataStr = element.getAttribute('data-win-res');
+                    
+                    // CORRECTION: Vérifier si c'est un JSON valide
+                    if (!resDataStr || resDataStr.trim() === '') {
+                        return;
+                    }
+                    
+                    // CORRECTION: Nettoyer la chaîne avant parsing
+                    resDataStr = resDataStr.trim();
+                    
+                    // CORRECTION: Vérifier si ça commence et finit par des accolades
+                    if (!resDataStr.startsWith('{') || !resDataStr.endsWith('}')) {
+                        console.warn('Format data-win-res invalide pour élément:', element, 'Valeur:', resDataStr);
+                        return;
+                    }
+                    
+                    var resData = JSON.parse(resDataStr);
+                    
                     Object.keys(resData).forEach(function (property) {
                         var resourceKey = resData[property];
-                        var value = resourceManager.getString(resourceKey);
+                        var value = resourceManager.getString(resourceKey, resourceKey);
                         
                         switch (property) {
                             case 'textContent':
@@ -276,7 +269,12 @@
                         }
                     });
                 } catch (e) {
-                    console.error('Erreur lors du traitement des ressources pour l\'élément:', element, e);
+                    console.warn('Erreur lors du traitement des ressources pour élément:', element);
+                    console.warn('Valeur data-win-res:', element.getAttribute('data-win-res'));
+                    console.warn('Erreur:', e.message);
+                    
+                    // CORRECTION: Continuer le traitement même en cas d'erreur
+                    // Ne pas arrêter tout le processus
                 }
             });
         }
@@ -284,11 +282,13 @@
 
     // Auto-traitement des ressources au chargement du DOM
     document.addEventListener('DOMContentLoaded', function () {
+        console.log('🌐 Traitement des ressources de localisation...');
         WinJS.Res.processAll();
     });
 
     // Retraitement lors du changement de langue
     WinJS.Application.addEventListener('languageChanged', function () {
+        console.log('🌐 Retraitement des ressources après changement de langue');
         WinJS.Res.processAll();
     });
 

@@ -1,5 +1,5 @@
 // frontend-winjs/js/app.js
-// Application principale avec syntaxe WinJS native
+// Application principale avec syntaxe WinJS native - CORRIGÉ
 
 (function () {
     "use strict";
@@ -102,7 +102,7 @@
             _getDefaultPreferences: function () {
                 return {
                     theme: 'dark',
-                    language: 'en',
+                    language: 'fr',
                     autoPlay: false,
                     showAdultContent: false,
                     defaultSort: 'popularity.desc',
@@ -179,7 +179,7 @@
                 // Chaîne d'initialisation
                 var initPromise = WinJS.Promise.wrap();
                 
-                // Initialisation du service worker pour le support hors ligne
+                // CORRECTION: Initialisation du service worker de manière optionnelle
                 if (this.config.features.offlineSupport) {
                     initPromise = initPromise.then(function () {
                         return that._initServiceWorker();
@@ -257,18 +257,34 @@
                 document.body.insertAdjacentHTML('beforeend', errorHTML);
             },
 
-            // Initialisation du service worker
+            // CORRECTION: Initialisation du service worker avec gestion d'erreur améliorée
             _initServiceWorker: function () {
                 if ('serviceWorker' in navigator) {
                     var that = this;
-                    return navigator.serviceWorker.register('/sw.js')
-                        .then(function (registration) {
-                            that.serviceWorker = registration;
-                            console.log('Service Worker enregistré avec succès');
-                        }, function (error) {
-                            console.warn('Échec de l\'enregistrement du Service Worker:', error);
-                        });
+                    
+                    // Essayer plusieurs chemins possibles pour le Service Worker
+                    var swPaths = ['./sw.js', '/sw.js', '../sw.js'];
+                    
+                    function tryRegisterSW(pathIndex) {
+                        if (pathIndex >= swPaths.length) {
+                            console.log('ℹ️ Service Worker non trouvé - Fonctionnement sans cache offline');
+                            return WinJS.Promise.wrap();
+                        }
+                        
+                        return navigator.serviceWorker.register(swPaths[pathIndex])
+                            .then(function (registration) {
+                                that.serviceWorker = registration;
+                                console.log('✅ Service Worker enregistré avec succès:', swPaths[pathIndex]);
+                                return registration;
+                            }, function (error) {
+                                console.warn('⚠️ Tentative Service Worker échouée (' + swPaths[pathIndex] + '):', error.message);
+                                return tryRegisterSW(pathIndex + 1);
+                            });
+                    }
+                    
+                    return tryRegisterSW(0);
                 } else {
+                    console.log('ℹ️ Service Worker non supporté par ce navigateur');
                     return WinJS.Promise.wrap();
                 }
             },
@@ -284,17 +300,18 @@
                 }).then(function (response) {
                     if (response.status >= 200 && response.status < 300) {
                         var health = JSON.parse(response.responseText);
-                        console.log('Connexion API réussie:', health);
+                        console.log('✅ Connexion API réussie:', health);
                     } else {
                         throw new Error('Échec de la vérification de santé de l\'API: ' + response.status);
                     }
                 }, function (error) {
-                    console.error('Échec de la connexion API:', error);
+                    console.error('❌ Échec de la connexion API:', error);
                     
                     if (!that.appState.getState().isOnline) {
-                        console.log('Fonctionnement en mode hors ligne');
+                        console.log('ℹ️ Fonctionnement en mode hors ligne');
                     } else {
-                        throw new Error('Impossible de se connecter à l\'API de base de données de films');
+                        console.warn('⚠️ API non disponible, fonctionnement en mode dégradé');
+                        // Ne pas faire échouer l'initialisation à cause de l'API
                     }
                 });
             },
@@ -304,7 +321,7 @@
                 return new WinJS.Promise(function (complete) {
                     if (WinJS.Application) {
                         WinJS.Application.addEventListener("activated", function (args) {
-                            console.log('Application WinJS activée');
+                            console.log('✅ Application WinJS activée');
                             complete();
                         });
                         
@@ -332,7 +349,16 @@
                         that.controller = new App.Controllers.MovieController();
                         that._setupControllerListeners();
                     } else {
-                        throw new Error('MovieController non trouvé');
+                        console.warn('⚠️ MovieController non trouvé - Chargement en cours...');
+                        // Réessayer après un délai
+                        return WinJS.Promise.timeout(1000).then(function () {
+                            if (typeof App.Controllers !== 'undefined' && App.Controllers.MovieController) {
+                                that.controller = new App.Controllers.MovieController();
+                                that._setupControllerListeners();
+                            } else {
+                                throw new Error('MovieController non disponible');
+                            }
+                        });
                     }
                 });
             },
@@ -392,21 +418,21 @@
             _setupKeyboardShortcuts: function () {
                 var that = this;
                 var shortcuts = {
-                    'Ctrl+K': function () {
+                    'Ctrl+k': function () {
                         var searchInput = document.getElementById('searchInput');
                         if (searchInput) searchInput.focus();
                     },
-                    'Ctrl+H': function () {
+                    'Ctrl+h': function () {
                         if (that.controller && that.controller._showHome) {
                             that.controller._showHome();
                         }
                     },
-                    'Ctrl+F': function () {
+                    'Ctrl+f': function () {
                         if (that.controller && that.controller._showFavorites) {
                             that.controller._showFavorites();
                         }
                     },
-                    'Ctrl+R': function () {
+                    'Ctrl+r': function () {
                         if (that.controller && that.controller.refresh) {
                             that.controller.refresh();
                         }
@@ -417,7 +443,10 @@
                 };
 
                 document.addEventListener('keydown', function (e) {
-                    var combo = (e.ctrlKey ? 'Ctrl+' : '') + e.key;
+                    var combo = '';
+                    if (e.ctrlKey) combo += 'Ctrl+';
+                    combo += e.key.toLowerCase();
+                    
                     if (shortcuts[combo]) {
                         e.preventDefault();
                         shortcuts[combo]();
@@ -432,7 +461,7 @@
                     if ('performance' in window) {
                         var perfData = window.performance.timing;
                         var loadTime = perfData.loadEventEnd - perfData.navigationStart;
-                        console.log('Temps de chargement de la page: ' + loadTime + 'ms');
+                        console.log('⏱️ Temps de chargement de la page: ' + loadTime + 'ms');
                     }
                 });
             },
@@ -460,7 +489,7 @@
                     document.body.classList.add('light-theme');
                 }
                 
-                console.log('Préférences utilisateur appliquées:', prefs);
+                console.log('✅ Préférences utilisateur appliquées:', prefs);
             },
 
             // Affichage des notifications

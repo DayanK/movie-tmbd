@@ -188,14 +188,17 @@
         // Enregistrement du Service Worker
         function registerServiceWorker() {
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/sw.js')
+                // CORRECTION: Le Service Worker doit être accessible depuis la racine
+                navigator.serviceWorker.register('./sw.js')
                     .then(function(registration) {
                         console.log('✅ Service Worker enregistré:', registration);
                     })
                     .catch(function(error) {
-                        console.warn('⚠️ Échec Service Worker:', error);
-                        // Continue sans Service Worker
+                        console.warn('⚠️ Service Worker non disponible (ce qui est normal en développement):', error);
+                        // Continue sans Service Worker - ce n'est pas critique
                     });
+            } else {
+                console.log('ℹ️ Service Worker non supporté par ce navigateur');
             }
         }
 

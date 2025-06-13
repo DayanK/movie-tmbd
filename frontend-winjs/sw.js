@@ -1,4 +1,5 @@
-// sw.js - Service Worker pour MovieDB Explorer
+// sw.js - Service Worker pour MovieDB Explorer 
+// IMPORTANT: Ce fichier doit être placé à la RACINE du serveur web (même niveau que index.html)
 const CACHE_NAME = 'moviedb-explorer-v2.0.0';
 const API_CACHE_NAME = 'moviedb-api-cache-v1';
 
